@@ -1,0 +1,22 @@
+# Node version সেট করা
+[phases.setup]
+node_version = "22.11.0"
+
+# Dependencies install
+[phases.install]
+commands = [
+  "npm ci"
+]
+
+# Build commands
+[phases.build]
+commands = [
+  "npm run build"
+]
+
+# Start server
+[phases.start]
+commands = [
+  "npm run start"
+]
+
