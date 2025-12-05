@@ -23,6 +23,7 @@ const verificationSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+
     originalDocuments: [{ type: String }], // Array of image URLs or file paths
     attestedDocuments: [{ type: String }], // Array of image URLs or file paths
     status: { type: Boolean, default: false }, // true for approved, false for pending

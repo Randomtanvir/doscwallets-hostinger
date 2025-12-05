@@ -9,23 +9,23 @@ export async function POST(request) {
     const body = await request.formData();
 
     // Multiple images upload — only if files exist
-    const originalDocument = body
+    const originalDocuments = body
       .getAll("originalDocuments")
       .filter((file) => typeof file === "object" && file.size > 0);
 
     const originalDocumentArray = await Promise.all(
-      originalDocument.map(async (file) => {
+      originalDocuments.map(async (file) => {
         const url = await uploadToCloudinary(file, "OriginalDocuments");
         return url;
       })
     );
 
-    const attestedDocument = body
+    const attestedDocuments = body
       .getAll("attestedDocuments")
       .filter((file) => typeof file === "object" && file.size > 0);
 
     const attestedImageArray = await Promise.all(
-      attestedDocument.map(async (file) => {
+      attestedDocuments.map(async (file) => {
         const url = await uploadToCloudinary(file, "AttestedDocuments");
         return url;
       })
@@ -44,10 +44,12 @@ export async function POST(request) {
       verificationStatus: body.get("verificationStatus"),
       verificationDateTime: body.get("verificationDateTime"),
       verifierName: body.get("verifierName"),
-      urlLink: body.get("urlLink"),
-      urlNumber: body.get("urlNumber"),
-      OriginalDocuments: originalDocumentArray,
-      AttestedDocuments: attestedImageArray,
+      urlLink: body.get("urlLink") || null,
+      urlNumber: body.get("urlNumber") || Date.now().toString(),
+
+      // ✔ model field names মেলানো হলো
+      originalDocuments: originalDocumentArray,
+      attestedDocuments: attestedImageArray,
     };
 
     // Save to DB

@@ -214,7 +214,7 @@ export async function PATCH(req, { params }) {
           body.get("verificationDateTime") || existingApp.verificationDateTime,
         verifierName: body.get("verifierName") || existingApp.verifierName,
         urlLink: body.get("urlLink") || existingApp.urlLink,
-        urlNumber: body.get("urlNumber") || existingApp.urlNumber,
+        urlNumber: body.get("urlLink") || existingApp.urlNumber,
         originalDocuments: originalDocs,
         attestedDocuments: attestedDocs,
       };
