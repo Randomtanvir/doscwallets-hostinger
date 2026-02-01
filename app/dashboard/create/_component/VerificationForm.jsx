@@ -16,14 +16,14 @@ export default function VerificationForm({
       transactionNumber: "VN00416",
       paymentId: "202563914675",
       totalPayment: "OMR 25.75",
-      transactionDate: "10 JAN 2026",
+      transactionDate: "10 FEB 2026",
       documentType: "Marriage certificate",
       applicantName: "",
       email: "@gmail.com",
       phoneNumber: "78943",
       verifierName: "Foreign Ministry - Oman",
       verificationStatus: "Approved",
-      verificationDateTime: "2026-01-10 11:01:23",
+      verificationDateTime: "2026-02-10 11:03:06",
       urlLink: verifactionData?.urlLink || generateEncodedString(),
     },
   });
@@ -77,7 +77,7 @@ export default function VerificationForm({
         {
           method: isEdit ? "PATCH" : "POST",
           body: formData,
-        }
+        },
       );
 
       if (!res.ok) throw new Error("Something went wrong");
@@ -85,7 +85,7 @@ export default function VerificationForm({
       toast.success(
         isEdit
           ? "Verification updated successfully!"
-          : "Verification created successfully!"
+          : "Verification created successfully!",
       );
       router.push("/dashboard/lists");
     } catch (err) {
