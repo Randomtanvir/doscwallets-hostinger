@@ -3,15 +3,14 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getAllVerificationData } from "@/utils/fetcher";
 
-// ⭐ This is a SERVER COMPONENT (no "use client")
-
 export default async function ListsPage({ searchParams }) {
   const resolvedParams = await searchParams;
+
   const page = parseInt(resolvedParams?.page) || 1;
+  const search = resolvedParams?.search || "";
   const limit = 10;
 
-  // Fetch data on the server
-  const result = await getAllVerificationData(page, limit);
+  const result = await getAllVerificationData(page, limit, search);
 
   const verificationInfo = result?.verificationInfo || [];
   const pagination = result?.pagination || {};
@@ -40,6 +39,23 @@ export default async function ListsPage({ searchParams }) {
         HOME
       </Link>
 
+      {/* 🔍 SEARCH UI */}
+      <form method="GET" className="mb-6 flex gap-2">
+        <input
+          type="text"
+          name="search"
+          defaultValue={search}
+          placeholder="Search by Transaction Number..."
+          className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+        />
+        <button
+          type="submit"
+          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+        >
+          Search
+        </button>
+      </form>
+
       {/* Results */}
       {verificationInfo.length > 0 ? (
         verificationInfo.map((veri, i) => (
@@ -55,37 +71,34 @@ export default async function ListsPage({ searchParams }) {
           {/* Prev */}
           {pagination.hasPrevPage ? (
             <Link
-              href={`?page=${pagination.currentPage - 1}`}
-              className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-green-400 to-green-600 text-white rounded-xl shadow hover:opacity-90 transition"
+              href={`?page=${pagination.currentPage - 1}&search=${search}`}
+              className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-green-400 to-green-600 text-white rounded-xl shadow hover:opacity-90"
             >
               <ChevronLeft className="w-4 h-4" />
               Prev
             </Link>
           ) : (
-            <span className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-400 rounded-xl cursor-not-allowed">
-              <ChevronLeft className="w-4 h-4" />
+            <span className="px-4 py-2 bg-gray-200 text-gray-400 rounded-xl">
               Prev
             </span>
           )}
 
-          {/* Page Info */}
-          <span className="px-4 py-2 font-semibold text-lg text-green-700 bg-green-100 rounded-lg shadow-sm">
+          <span className="px-4 py-2 font-semibold text-lg text-green-700 bg-green-100 rounded-lg">
             Page {pagination.currentPage} of {pagination.totalPages}
           </span>
 
           {/* Next */}
           {pagination.hasNextPage ? (
             <Link
-              href={`?page=${pagination.currentPage + 1}`}
-              className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-blue-400 to-blue-600 text-white rounded-xl shadow hover:opacity-90 transition"
+              href={`?page=${pagination.currentPage + 1}&search=${search}`}
+              className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-blue-400 to-blue-600 text-white rounded-xl shadow hover:opacity-90"
             >
               Next
               <ChevronRight className="w-4 h-4" />
             </Link>
           ) : (
-            <span className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-400 rounded-xl cursor-not-allowed">
+            <span className="px-4 py-2 bg-gray-200 text-gray-400 rounded-xl">
               Next
-              <ChevronRight className="w-4 h-4" />
             </span>
           )}
         </div>

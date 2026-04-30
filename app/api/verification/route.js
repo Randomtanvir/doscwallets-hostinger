@@ -17,7 +17,7 @@ export async function POST(request) {
       originalDocuments.map(async (file) => {
         const url = await uploadToCloudinary(file, "OriginalDocuments");
         return url;
-      })
+      }),
     );
 
     const attestedDocuments = body
@@ -28,7 +28,7 @@ export async function POST(request) {
       attestedDocuments.map(async (file) => {
         const url = await uploadToCloudinary(file, "AttestedDocuments");
         return url;
-      })
+      }),
     );
 
     // Build application data
@@ -58,13 +58,13 @@ export async function POST(request) {
 
     return NextResponse.json(
       { message: "Application saved successfully", application },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("❌ Error in POST /applications:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -73,20 +73,29 @@ export async function GET(request) {
   try {
     await connectMongo();
 
-    // 🔹 Extract search params (default: page=1, limit=10)
     const { searchParams } = new URL(request.url);
+
     const page = parseInt(searchParams.get("page")) || 1;
     const limit = parseInt(searchParams.get("limit")) || 10;
+    const search = searchParams.get("search") || "";
+
     const skip = (page - 1) * limit;
 
-    // 🔹 Fetch data with pagination
-    const verificationInfo = await VerificationModel.find({})
+    // 🔥 Only Transaction Number Search
+    let query = {};
+
+    if (search) {
+      query = {
+        transactionNumber: { $regex: search, $options: "i" },
+      };
+    }
+
+    const verificationInfo = await VerificationModel.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
-    // 🔹 Count total documents for pagination meta
-    const totalDocs = await VerificationModel.countDocuments();
+    const totalDocs = await VerificationModel.countDocuments(query);
     const totalPages = Math.ceil(totalDocs / limit);
 
     return NextResponse.json(
@@ -102,13 +111,13 @@ export async function GET(request) {
           hasPrevPage: page > 1,
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("❌ Error in GET /applications:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

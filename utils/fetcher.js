@@ -1,31 +1,29 @@
 "use server";
 
 // Fetch all verifications with pagination
-export async function getAllVerificationData(page = 1, limit = 5) {
+export async function getAllVerificationData(page = 1, limit = 5, search = "") {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   try {
     const res = await fetch(
-      `${apiUrl}/verification?page=${page}&limit=${limit}`,
+      `${apiUrl}/verification?page=${page}&limit=${limit}&search=${search}`,
       {
-        cache: "no-store", // always fresh data
-      }
+        cache: "no-store",
+      },
     );
 
     if (!res.ok) {
       throw new Error(
-        `Failed to fetch verification data. Status: ${res.status}`
+        `Failed to fetch verification data. Status: ${res.status}`,
       );
     }
 
-    const data = await res.json();
-    return data;
+    return await res.json();
   } catch (error) {
     console.error("❌ getAllVerificationData Error:", error);
     return { error: true, message: error.message };
   }
 }
-
 // Fetch single verification by ID
 export const getSingleVerificationData = async (id) => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -60,7 +58,7 @@ export const getSingleVerificationDataByURLLINK = async (url) => {
         return data?.application || {};
       } else {
         console.warn(
-          `Attempt ${attempt + 1}: Failed with status ${res.status}`
+          `Attempt ${attempt + 1}: Failed with status ${res.status}`,
         );
       }
     } catch (err) {
